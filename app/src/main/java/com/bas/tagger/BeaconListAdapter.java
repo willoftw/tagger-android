@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by willo on 25/10/2015.
@@ -71,7 +73,7 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
                 })
                 .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        httpGet("http://google.com");
+
                     }
                 })
                 .setNegativeButton("Comment", new DialogInterface.OnClickListener() {
@@ -85,13 +87,20 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
 
     }
 
+    Node temp_obj;
     @Override
     public void add(Node object) {
         if (nodes.contains(object))
             return;
         super.add(object);
-        Log.d("BEACONADAPTER", Settings.SERVERURL +"messages?nodeid="+object.nodeid);
-        object.messages = httpGet(Settings.SERVERURL +"messages?nodeid="+object.nodeid).toString();
+        Log.d("BEACONADAPTER", Settings.SERVERURL + "messages?nodeid=" + object.nodeid);
+        try {
+            object.messages =  new HTTPGet().execute(Settings.SERVERURL + "messages?nodeid=" + object.nodeid).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         nodes.add(object);
     }
 
@@ -120,43 +129,13 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
 
         Node node = nodes.get(position);
         holder.nodeid.setText(node.nodeid);
-        holder.nodeuses.setText(node.uses.toString());
-        holder.nodecomments.setText(node.messages.toString());
+        holder.nodeuses.setText(node.uses);
+        holder.nodecomments.setText(node.messages);
         holder.imgIcon.setImageResource(node.icon);
 
         return row;
     }
 
-    private String httpGet(String url)
-    {
-        final HttpClient httpclient = new DefaultHttpClient();
-        final HttpGet httpget = new HttpGet(url);
-        String result=null;
-        try {
-            HttpResponse response = httpclient.execute(httpget);
-            HttpEntity entity = response.getEntity();
-
-            if (entity != null) {
-                InputStream inputstream = entity.getContent();
-                BufferedReader bufferedreader =
-                        new BufferedReader(new InputStreamReader(inputstream));
-                StringBuilder stringbuilder = new StringBuilder();
-
-                String currentline = null;
-                while ((currentline = bufferedreader.readLine()) != null) {
-                    stringbuilder.append(currentline + "\n");
-                }
-                result = stringbuilder.toString();
-                Log.v("HTTP REQUEST",result);
-                inputstream.close();
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
-
-    }
 
     static class NodeHolder
     {
@@ -166,6 +145,48 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
         TextView nodecomments;
     }
 
+
+    class HTTPGet extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... f_url) {
+
+                final HttpClient httpclient = new DefaultHttpClient();
+                final HttpGet httpget = new HttpGet(f_url[0]);
+                String result=null;
+                try {
+                    HttpResponse response = httpclient.execute(httpget);
+                    HttpEntity entity = response.getEntity();
+
+                    if (entity != null) {
+                        InputStream inputstream = entity.getContent();
+                        BufferedReader bufferedreader =
+                                new BufferedReader(new InputStreamReader(inputstream));
+                        StringBuilder stringbuilder = new StringBuilder();
+
+                        String currentline = null;
+                        while ((currentline = bufferedreader.readLine()) != null) {
+                            stringbuilder.append(currentline + "\n");
+                        }
+                        result = stringbuilder.toString();
+                        Log.v("HTTP REQUEST",result);
+                        inputstream.close();
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return result;
+        }
+
+        protected void onProgressUpdate(String... progress) {
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            //playMusic();
+        }
+    }
 
 
 
