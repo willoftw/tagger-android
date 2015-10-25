@@ -90,12 +90,16 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
     Node temp_obj;
     @Override
     public void add(Node object) {
-        if (nodes.contains(object))
+        for (int i = 0; i < nodes.size(); i++)
+        {
+            if (nodes.get(i).nodeid == object.nodeid);
             return;
+        }
         super.add(object);
         Log.d("BEACONADAPTER", Settings.SERVERURL + "messages?nodeid=" + object.nodeid);
         try {
             object.messages =  new HTTPGet().execute(Settings.SERVERURL + "messages?nodeid=" + object.nodeid).get();
+            object.uses =  new HTTPGet().execute(Settings.SERVERURL + "uses?nodeid=" + object.nodeid).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
