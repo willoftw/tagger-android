@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bas.tagger.util.Settings;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
@@ -30,6 +44,11 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
         super(_context, _layoutResourceId);
         this.layoutResourceId = _layoutResourceId;
         this.context = _context;
+
+
+        //SUPER HAX FOR SPEED
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         //nodes.add(new Node(R.mipmap.ic_launcher,"loading",null));
     }
 
@@ -39,9 +58,6 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
 
 
         final EditText txtUrl = new EditText(context);
-
-// Set the default text to a link of the Queen
-        txtUrl.setHint("http://www.librarising.com/astrology/celebs/images2/QR/queenelizabethii.jpg");
 
         new AlertDialog.Builder(context)
                 .setTitle("Your near : " + nodes.get(position).uuid)
@@ -55,7 +71,7 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
                 })
                 .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-
+                        httpGet("http://google.com");
                     }
                 })
                 .setNegativeButton("Comment", new DialogInterface.OnClickListener() {
@@ -74,6 +90,8 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
         if (nodes.contains(object))
             return;
         super.add(object);
+        Log.d("BEACONADAPTER", Settings.SERVERURL +"messages?nodeid="+object.nodeid);
+        object.messages = httpGet(Settings.SERVERURL +"messages?nodeid="+object.nodeid).toString();
         nodes.add(object);
     }
 
@@ -109,6 +127,37 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
         return row;
     }
 
+    private String httpGet(String url)
+    {
+        final HttpClient httpclient = new DefaultHttpClient();
+        final HttpGet httpget = new HttpGet(url);
+        String result=null;
+        try {
+            HttpResponse response = httpclient.execute(httpget);
+            HttpEntity entity = response.getEntity();
+
+            if (entity != null) {
+                InputStream inputstream = entity.getContent();
+                BufferedReader bufferedreader =
+                        new BufferedReader(new InputStreamReader(inputstream));
+                StringBuilder stringbuilder = new StringBuilder();
+
+                String currentline = null;
+                while ((currentline = bufferedreader.readLine()) != null) {
+                    stringbuilder.append(currentline + "\n");
+                }
+                result = stringbuilder.toString();
+                Log.v("HTTP REQUEST",result);
+                inputstream.close();
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
     static class NodeHolder
     {
         ImageView imgIcon;
@@ -116,5 +165,8 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
         TextView nodeuses;
         TextView nodecomments;
     }
+
+
+
 
 }
