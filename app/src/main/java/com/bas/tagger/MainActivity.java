@@ -45,6 +45,8 @@ public class MainActivity extends Activity {
     private final String TAG = "TAGGER";
 
     protected ScanCallback mScanCallback = new ScanCallback() {
+
+        ArrayList<String>nodeids = new ArrayList<String>();
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             byte[] scanData = result.getScanRecord().getBytes();
@@ -58,7 +60,9 @@ public class MainActivity extends Activity {
 
 
                 Log.d(TAG,uuid.toString());
-                adapter.add(new Node(R.mipmap.ic_launcher,uuid.toString(),major,minor));
+                if (!nodeids.contains(uuid.toString()))
+                    adapter.add(new Node(R.mipmap.ic_launcher,uuid.toString(),major,minor));
+                nodeids.add(uuid.toString());
             }
 
         }

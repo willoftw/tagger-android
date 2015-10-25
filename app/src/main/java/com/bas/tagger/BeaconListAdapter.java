@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.StrictMode;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,8 +68,38 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
                 //.setView(txtUrl)
                 .setPositiveButton("Use", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        Node node = nodes.get(position);
-                        Toast.makeText(context, "adding use to " + node.uuid, Toast.LENGTH_SHORT).show();
+                        final Node node = nodes.get(position);
+                        Toast.makeText(context, "adding use to " + node.nodeid, Toast.LENGTH_SHORT).show();
+                        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
+                        final EditText edittext = new EditText(context);
+                        alert.setMessage("Enter Your Use For this space");
+                        alert.setTitle("Use");
+
+                        alert.setView(edittext);
+
+                        alert.setPositiveButton("GO", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                try {
+                                    new HTTPGet().execute(Settings.SERVERURL + "add_use?nodeid=" + node.nodeid + "&use=" + edittext.getText().toString().replaceAll(" ", "_")).get();
+                                    node.messages =  new HTTPGet().execute(Settings.SERVERURL + "messages?nodeid=" + node.nodeid).get();
+                                    node.uses =  new HTTPGet().execute(Settings.SERVERURL + "uses?nodeid=" + node.nodeid).get();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (ExecutionException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // what ever you want to do with No option.
+                            }
+                        });
+
+                        alert.show();
                     }
                 })
                 .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
@@ -76,10 +107,41 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
 
                     }
                 })
-                .setNegativeButton("Comment", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Message", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        Node node = nodes.get(position);
-                        Toast.makeText(context, "adding comment to " + node.uuid, Toast.LENGTH_SHORT).show();
+                        final Node node = nodes.get(position);
+                        Toast.makeText(context, "adding message to " + node.uuid, Toast.LENGTH_SHORT).show();
+                        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
+                        final EditText edittext = new EditText(context);
+                        alert.setMessage("Enter Your Message For this space");
+                        alert.setTitle("Comment");
+
+                        alert.setView(edittext);
+
+                        alert.setPositiveButton("GO", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                try {
+                                    new HTTPGet().execute(Settings.SERVERURL + "add_message?nodeid=" + node.nodeid + "&message=" + edittext.getText().toString().replaceAll(" ", "_")).get();
+
+                                    node.messages =  new HTTPGet().execute(Settings.SERVERURL + "messages?nodeid=" + node.nodeid).get();
+                                    node.uses =  new HTTPGet().execute(Settings.SERVERURL + "uses?nodeid=" + node.nodeid).get();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (ExecutionException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // what ever you want to do with No option.
+                            }
+                        });
+
+                        alert.show();
 
                     }
                 })
@@ -90,11 +152,6 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
     Node temp_obj;
     @Override
     public void add(Node object) {
-        for (int i = 0; i < nodes.size(); i++)
-        {
-            if (nodes.get(i).nodeid == object.nodeid);
-            return;
-        }
         super.add(object);
         Log.d("BEACONADAPTER", Settings.SERVERURL + "messages?nodeid=" + object.nodeid);
         try {

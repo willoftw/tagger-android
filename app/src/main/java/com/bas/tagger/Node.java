@@ -21,7 +21,7 @@ public class Node {
     {
         this.icon = _icon;
         this.uuid = _uuid;
-        this.nodeid = _uuid.substring(0, _uuid.length() - 10);;
+        this.nodeid = _uuid + "-" + _major + "-" + _minor;
         this.major = _major;
         this.minor = _minor;
     }
