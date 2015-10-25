@@ -30,6 +30,8 @@ public class BeaconListAdapter extends ArrayAdapter<Node> {
 
     @Override
     public void add(Node object) {
+        if (nodes.contains(object))
+            return;
         super.add(object);
         nodes.add(object);
     }
