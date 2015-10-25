@@ -1,6 +1,7 @@
 package com.bas.tagger;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
@@ -25,6 +27,8 @@ public class MainActivity extends Activity {
     private BluetoothLeScanner mBluetoothLeScanner;
     private ArrayList<ScanFilter> mScanFilter = new ArrayList<ScanFilter>();
     private ScanSettings mScanSettings;
+
+    BeaconListAdapter adapter;
 
     private final String TAG = "TAGGER";
 
@@ -69,6 +73,7 @@ public class MainActivity extends Activity {
                 int minor = (scanRecord[startByte+22] & 0xff) * 0x100 + (scanRecord[startByte+23] & 0xff);
 
                 Log.d(TAG,uuid);
+                adapter.add(new Node(R.mipmap.ic_launcher,uuid,databaseList()));
             }
 
         }
@@ -84,6 +89,12 @@ public class MainActivity extends Activity {
 
         setScanSettings();
         mBluetoothLeScanner.startScan(mScanFilter, mScanSettings, mScanCallback);
+        Node[] nodes = {};
+        adapter=new BeaconListAdapter(this,R.layout.beaconlist);
+        ListView list=(ListView)findViewById(R.id.android_list);
+        list.setAdapter(adapter);
+
+
     }
 
     /**
