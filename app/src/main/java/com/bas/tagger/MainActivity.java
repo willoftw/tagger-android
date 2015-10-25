@@ -18,6 +18,7 @@ import android.widget.ListView;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,50 +36,36 @@ public class MainActivity extends Activity {
     protected ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-            byte[] scanRecord;
-            if (result.getScanRecord() != null) {
-                scanRecord = result.getScanRecord().getBytes();
-            }
-            else
-                return;
+            byte[] scanData = result.getScanRecord().getBytes();
+            if (scanData[7] == 0x02 && scanData[8] == 0x15) { // iBeacon indicator
+               // System.out.println("iBeacon Packet: %s", bytesToHexString(scanData));
+                UUID uuid = getGuidFromByteArray(Arrays.copyOfRange(scanData, 9, 25));
+                int major = (scanData[25] & 0xff) * 0x100 + (scanData[26] & 0xff);
+                int minor = (scanData[27] & 0xff) * 0x100 + (scanData[28] & 0xff);
+                byte txpw = scanData[29];
+                System.out.println("iBeacon Major = " + major + " | Minor = " + minor + " TxPw " + (int)txpw + " | UUID = " + uuid.toString());
 
-            int startByte = 2;
-            boolean patternFound = false;
-            while (startByte <= 5) {
-                if (    ((int) scanRecord[startByte + 2] & 0xff) == 0x02 && //Identifies an iBeacon
-                        ((int) scanRecord[startByte + 3] & 0xff) == 0x15) { //Identifies correct data length
-                    patternFound = true;
-                    break;
-                }
-                startByte++;
-            }
 
-            if (patternFound) {
-                //Convert to hex String
-                byte[] uuidBytes = new byte[16];
-                System.arraycopy(scanRecord, startByte+4, uuidBytes, 0, 16);
-                String hexString = bytesToHex(uuidBytes);
-
-                //Here is your UUID
-                String uuid =  hexString.substring(0,8) + "-" +
-                        hexString.substring(8,12) + "-" +
-                        hexString.substring(12,16) + "-" +
-                        hexString.substring(16,20) + "-" +
-                        hexString.substring(20,32);
-
-                //Here is your Major value
-                int major = (scanRecord[startByte+20] & 0xff) * 0x100 + (scanRecord[startByte+21] & 0xff);
-
-                //Here is your Minor value
-                int minor = (scanRecord[startByte+22] & 0xff) * 0x100 + (scanRecord[startByte+23] & 0xff);
-
-                Log.d(TAG,uuid);
-                adapter.add(new Node(R.mipmap.ic_launcher,uuid,databaseList()));
+                Log.d(TAG,uuid.toString());
+                adapter.add(new Node(R.mipmap.ic_launcher,uuid.toString(),new String(scanData),major,minor));
             }
 
         }
     };
 
+    public static String bytesToHexString(byte[] bytes) {
+        StringBuilder buffer = new StringBuilder();
+        for(int i=0; i<bytes.length; i++) {
+            buffer.append(String.format("%02x", bytes[i]));
+        }
+        return buffer.toString();
+    }
+    public static UUID getGuidFromByteArray(byte[] bytes)
+    {
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        UUID uuid = new UUID(bb.getLong(), bb.getLong());
+        return uuid;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -25,7 +25,7 @@ public class BeaconListAdapter extends ArrayAdapter<Node> {
         super(_context, _layoutResourceId);
         this.layoutResourceId = _layoutResourceId;
         this.context = _context;
-        nodes.add(new Node(R.mipmap.ic_launcher,"loading",null));
+        //nodes.add(new Node(R.mipmap.ic_launcher,"loading",null));
     }
 
     @Override
@@ -48,8 +48,9 @@ public class BeaconListAdapter extends ArrayAdapter<Node> {
 
             holder = new NodeHolder();
             holder.imgIcon = (ImageView)row.findViewById(R.id.icon);
-            holder.txtTitle = (TextView)row.findViewById(R.id.firstLine);
-            holder.txtSubtitle = (TextView)row.findViewById(R.id.secondLine);
+            holder.nodeid = (TextView)row.findViewById(R.id.nodeid);
+            holder.nodeuses = (TextView)row.findViewById(R.id.nodeuses);
+            holder.nodecomments = (TextView)row.findViewById(R.id.nodecomments);
 
             row.setTag(holder);
         }
@@ -59,8 +60,9 @@ public class BeaconListAdapter extends ArrayAdapter<Node> {
         }
 
         Node node = nodes.get(position);
-        holder.txtTitle.setText(node.nodeid);
-       // holder.txtSubtitle.setText(node.messages);
+        holder.nodeid.setText(node.nodeid + "-" +node.major + " " + node.minor );
+        holder.nodeuses.setText(node.major + " " + node.minor);
+        holder.nodecomments.setText(node.major + " " + node.minor);
         holder.imgIcon.setImageResource(node.icon);
 
         return row;
@@ -69,8 +71,9 @@ public class BeaconListAdapter extends ArrayAdapter<Node> {
     static class NodeHolder
     {
         ImageView imgIcon;
-        TextView txtTitle;
-        TextView txtSubtitle;
+        TextView nodeid;
+        TextView nodeuses;
+        TextView nodecomments;
     }
 
 }

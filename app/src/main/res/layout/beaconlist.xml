@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:layout_height="100dip"
     android:padding="6dip" >
 
     <ImageView
@@ -15,7 +15,7 @@
         android:src="@mipmap/ic_launcher" />
 
     <TextView
-        android:id="@+id/secondLine"
+        android:id="@+id/nodecomments"
         android:layout_width="fill_parent"
         android:layout_height="26dip"
         android:layout_alignParentBottom="true"
@@ -23,20 +23,32 @@
         android:layout_toRightOf="@id/icon"
         android:ellipsize="marquee"
         android:singleLine="true"
-        android:text="Description"
+        android:text="Messages"
         android:textSize="12sp" />
 
     <TextView
-        android:id="@+id/firstLine"
+        android:id="@+id/nodeuses"
+        android:layout_width="fill_parent"
+        android:layout_height="26dip"
+        android:ellipsize="marquee"
+        android:singleLine="true"
+        android:text="Uses"
+        android:textSize="12sp"
+        android:layout_above="@+id/secondLine"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/icon" />
+
+    <TextView
+        android:id="@+id/nodeid"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/secondLine"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/icon"
         android:gravity="center_vertical"
-        android:text="Example application"
-        android:textSize="16sp" />
+        android:text="Nodeid"
+        android:textSize="16sp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/icon"
+        android:layout_toEndOf="@+id/icon"
+        android:layout_above="@+id/thirdLine" />
 
 </RelativeLayout>
