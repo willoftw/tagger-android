@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
 
 
                 Log.d(TAG,uuid.toString());
-                adapter.add(new Node(R.mipmap.ic_launcher,uuid.toString(),new String(scanData),major,minor));
+                adapter.add(new Node(R.mipmap.ic_launcher,uuid.toString(),major,minor));
             }
 
         }

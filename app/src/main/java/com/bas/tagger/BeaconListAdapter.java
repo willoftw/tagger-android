@@ -60,9 +60,9 @@ public class BeaconListAdapter extends ArrayAdapter<Node> {
         }
 
         Node node = nodes.get(position);
-        holder.nodeid.setText(node.nodeid + "-" +node.major + " " + node.minor );
-        holder.nodeuses.setText(node.major + " " + node.minor);
-        holder.nodecomments.setText(node.major + " " + node.minor);
+        holder.nodeid.setText(node.nodeid);
+        holder.nodeuses.setText(node.uses.toString());
+        holder.nodecomments.setText(node.messages.toString());
         holder.imgIcon.setImageResource(node.icon);
 
         return row;

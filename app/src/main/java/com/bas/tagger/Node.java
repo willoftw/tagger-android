@@ -17,11 +17,11 @@ public class Node {
         super();
     }
 
-    public Node(int _icon,String _uuid, String _nodeid, int _major, int _minor)
+    public Node(int _icon,String _uuid, int _major, int _minor)
     {
         this.icon = _icon;
         this.uuid = _uuid;
-        this.nodeid = _nodeid;
+        this.nodeid = _uuid + "-" + _major + "-" + _minor;
         this.major = _major;
         this.minor = _minor;
     }
