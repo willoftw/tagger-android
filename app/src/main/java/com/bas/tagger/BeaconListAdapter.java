@@ -155,8 +155,8 @@ public class BeaconListAdapter extends ArrayAdapter<Node> implements AdapterView
         super.add(object);
         Log.d("BEACONADAPTER", Settings.SERVERURL + "messages?nodeid=" + object.nodeid);
         try {
-            object.messages =  new HTTPGet().execute(Settings.SERVERURL + "messages?nodeid=" + object.nodeid).get();
-            object.uses =  new HTTPGet().execute(Settings.SERVERURL + "uses?nodeid=" + object.nodeid).get();
+            object.messages =   "Messages: " + new HTTPGet().execute(Settings.SERVERURL + "messages?nodeid=" + object.nodeid).get();
+            object.uses = "Uses: " + new HTTPGet().execute(Settings.SERVERURL + "uses?nodeid=" + object.nodeid).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

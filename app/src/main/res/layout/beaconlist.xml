@@ -34,7 +34,7 @@
         android:singleLine="true"
         android:text="Uses"
         android:textSize="12sp"
-        android:layout_above="@+id/secondLine"
+        android:layout_above="@+id/nodecomments"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/icon" />
 
@@ -45,10 +45,9 @@
         android:layout_alignWithParentIfMissing="true"
         android:gravity="center_vertical"
         android:text="Nodeid"
-        android:textSize="16sp"
-        android:layout_alignParentEnd="true"
+        android:textSize="13sp"
         android:layout_alignTop="@+id/icon"
-        android:layout_toEndOf="@+id/icon"
-        android:layout_above="@+id/thirdLine" />
+        android:layout_above="@+id/nodeuses"
+        android:layout_toEndOf="@+id/icon" />
 
 </RelativeLayout>
