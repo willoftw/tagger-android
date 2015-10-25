@@ -9,8 +9,8 @@ public class Node {
     public String uuid,nodeid;
     public int major;
     public int minor;
-    public String[] messages;
-    public String[] uses;
+    public String[] messages = {};
+    public String[] uses = {};
 
     public Node()
     {
