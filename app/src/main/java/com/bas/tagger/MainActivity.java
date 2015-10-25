@@ -14,10 +14,12 @@ import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 
 import java.lang.reflect.Array;
@@ -81,6 +83,9 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        Intent intent = new Intent(this.getApplicationContext(), WebViewActivity.class);
+//        startActivity(intent);
+
         setContentView(R.layout.activity_main);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
@@ -92,6 +97,9 @@ public class MainActivity extends Activity {
         adapter=new BeaconListAdapter(this,R.layout.beaconlist);
         ListView list=(ListView)findViewById(R.id.android_list);
         list.setAdapter(adapter);
+        list.setOnItemClickListener(adapter);
+
+
 //        setAdvertiseData();
 //        setAdvertiseSettings();
 //
