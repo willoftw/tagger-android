@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "com.bas.tagger"
-        minSdkVersion 21
-        targetSdkVersion 22
+        minSdkVersion 19
+        targetSdkVersion 19
         versionCode 1
         versionName "1.0"
     }
